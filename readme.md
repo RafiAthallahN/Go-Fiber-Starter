@@ -95,8 +95,9 @@ Here's the folder structure used in this starter
 
 - For Contributors:
 
-  > Make sure you always add comment/guide for each global function you made
+  > Make sure you always add comment/guide for each global function you made.
   > If you want to make changes on another branch, do pull request and wait until I approved it.
+  > But if not, do git pull before you push in case there are other changes from other contributor
 
 - To Do List:
   > - Make the pagination global funcion (already made but need to be adjust even more)
