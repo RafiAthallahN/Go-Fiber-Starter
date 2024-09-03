@@ -44,6 +44,7 @@ Here's the folder structure used in this starter
 - [Sirupsen/Logrus](https://github.com/sirupsen/logrus)
 - [GORM](https://gorm.io/)
 - [go-playground/validator](https://github.com/go-playground/validator)
+- [mitchellh/mapstructure](https://pkg.go.dev/github.com/mitchellh/mapstructure#section-readme)
 - ...
 
 ## Rules:
@@ -91,3 +92,9 @@ Here's the folder structure used in this starter
 - Note:
 
   > - Make sure adjust the Dockerfile & compose.yaml based on your needs before deployment to docker
+
+- To Do List:
+  > - Make the pagination global funcion (already made but need to be adjust even more)
+  > - Make the validation function (already made but it needs to be adjust even more)
+  > - Make guides to use each global function already made
+  > - Make converter for each uncovered convension by default (like encode decode base64)
