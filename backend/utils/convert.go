@@ -7,6 +7,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // EncodeBase64 function encode everything to base64 by convert the data to string then encode it to base64
@@ -19,6 +22,19 @@ func EncodeBase64(data any) string {
 func DecodeBase64(data string) string {
 	decodedValue, _ := base64.StdEncoding.DecodeString(data)
 	return string(decodedValue)
+}
+
+/*
+ConvertStringToTime used for convert date-formatted string to time.Time
+It'll return nil if the argument is invalid
+*/
+func ConvertStringToTime(date string) *time.Time {
+	convertedTime, errConvertedTime := time.Parse("02-01-2006 15:04:05", date)
+	if errConvertedTime != nil {
+		logrus.Errorf("Can't convert \"%v\": %v", date, errConvertedTime)
+		return nil
+	}
+	return &convertedTime
 }
 
 /*
