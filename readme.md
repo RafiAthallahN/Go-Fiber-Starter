@@ -93,6 +93,11 @@ Here's the folder structure used in this starter
 
   > - Make sure adjust the Dockerfile & compose.yaml based on your needs before deployment to docker
 
+- For Contributors:
+
+  > Make sure you always add comment/guide for each global function you made
+  > If you want to make changes on another branch, do pull request and wait until I approved it.
+
 - To Do List:
   > - Make the pagination global funcion (already made but need to be adjust even more)
   > - Make the validation function (already made but it needs to be adjust even more)
