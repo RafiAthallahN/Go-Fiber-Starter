@@ -30,12 +30,19 @@ func (p *Pagination) PaginationQuery(db *gorm.DB) *gorm.DB {
 	return db.Offset(*p.Page - 1**p.Limit).Limit(*p.Limit)
 }
 
-func GetTotalData(tableName string, db *gorm.DB) int64 {
+func GetTotalData(tableName string, db *gorm.DB, filter *func(*gorm.DB) *gorm.DB) int64 {
 	var count int64
 
-	if errGetTotalData := db.Table(tableName).Where("deleted_at IS NULL").Count(&count).Error; errGetTotalData != nil {
-		return 0
+	query := db.Table(tableName)
+
+	if filter != nil {
+		if errGetTotalData := query.Scopes(*filter).Count(&count).Error; errGetTotalData != nil {
+			return 0
+		}
 	}
 
+	if errGetTotalData := query.Count(&count).Error; errGetTotalData != nil {
+		return 0
+	}
 	return count
 }
