@@ -6,6 +6,7 @@ package utils
 import (
 	"encoding/base64"
 	"fmt"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -71,4 +72,25 @@ func PrimitiveCrossConvert(value any, to string) any {
 		return nil
 	}
 	return nil
+}
+
+/*
+ZeroValueToNil function return nil if the value given and the zero value of the given value data type are equal
+It'll return the pointer value given if the value given ant the zero value of the given value data type are not equal
+*/
+func ZeroValueToNil[T any](value T) *T {
+
+	if reflect.DeepEqual(value, reflect.Zero(reflect.TypeOf(value)).Interface()) {
+		var zero *T
+		return zero
+	}
+
+	return &value
+}
+
+/*
+ConvertToPointer function return the pointer value of given argument value
+*/
+func ConvertToPointer[T any](value T) *T {
+	return &value
 }
