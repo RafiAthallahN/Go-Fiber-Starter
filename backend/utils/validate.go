@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ValidateAndParse(c *fiber.Ctx, data any) error {
+func ParseAndValidate(c *fiber.Ctx, data any) error {
 
 	validate := validator.New()
 
