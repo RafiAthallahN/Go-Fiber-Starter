@@ -1,7 +1,8 @@
-package dev
+package config
 
 import (
 	"fmt"
+	"go-fiber/starter/backend/entities"
 	"go-fiber/starter/backend/entities/dto"
 
 	"gorm.io/driver/mysql"
@@ -21,6 +22,10 @@ func MySqlConnect(env dto.MySQLEnv) *gorm.DB {
 		fmt.Println("Failed to connect to the database")
 	} else {
 		fmt.Println("Connect Mysql")
+	}
+
+	if errMigrate := connect.AutoMigrate(entities.People{}); errMigrate != nil {
+		fmt.Printf("Failed to auto migrate: %v", errMigrate)
 	}
 
 	return connect
