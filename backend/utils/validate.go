@@ -5,45 +5,50 @@ This where everything about validation lies (include the user validation)
 package utils
 
 import (
+	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
-func ParseAndValidate(c *fiber.Ctx, data any) error {
-
+func ParseAndValidate[T any](c *fiber.Ctx, data []byte) (T, *Response) {
+	// Create a new validator instance
 	validate := validator.New()
 
-	if errParse := c.BodyParser(&data); errParse != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(Response{
+	var request T
+
+	if errParse := json.Unmarshal(data, &request); errParse != nil {
+		return request, &Response{
 			StatusCode: fiber.StatusBadRequest,
 			Message:    "Invalid data sent. Please Check your data and try again",
 			Error:      "Failed to parse data to struct",
-		})
+		}
 	}
 
-	if errValidate := validate.Struct(data); errValidate != nil {
+	// Validate the request struct
+	if errValidate := validate.Struct(request); errValidate != nil {
+		// Handle validation errors
 		var errors []string
-
 		if _, ok := errValidate.(*validator.InvalidValidationError); ok {
-			return c.Status(fiber.StatusBadRequest).JSON(Response{
+			return request, &Response{
 				StatusCode: fiber.StatusBadRequest,
-				Message:    "Invalid data sent. Please Check your data and try again",
-				Error:      "Validation Error : " + strings.Join([]string{errValidate.Error()}, ","),
-			})
+				Message:    "Invalid data sent. Please check your data and try again",
+				Error:      "Validation Error: " + errValidate.Error(),
+			}
 		}
 
 		for _, err := range errValidate.(validator.ValidationErrors) {
-			errors = append(errors, err.Field())
+			errors = append(errors, fmt.Sprintf("%s is %s", err.Field(), err.Tag()))
 		}
 
-		return c.Status(fiber.StatusBadRequest).JSON(Response{
+		return request, &Response{
 			StatusCode: fiber.StatusBadRequest,
-			Message:    "Fill The Required Fields",
-			Error:      errors,
-		})
+			Message:    "Fill the required fields",
+			Error:      strings.Join(errors, ", "),
+		}
 	}
 
-	return nil
+	return request, nil
 }

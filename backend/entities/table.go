@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type (
 	People struct {
-		FullName  string
+		FullName  string `validate:"required"`
 		FirstName string
 		LastName  string
 		Age       int
