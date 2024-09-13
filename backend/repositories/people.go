@@ -24,14 +24,14 @@ func (r *PeopleRepo) GetPeople(page, limit int) ([]entities.People, int, error) 
 
 	var id int64
 
-	if errGetAllPeople := r.db.Preload("people", func(db *gorm.DB) *gorm.DB {
-		return db.Count(&id)
-	}).Scopes(utils.NewPagination(nil, &page, &limit, nil).PaginationQuery).
-		Where("deleted_at IS NULL").
+	if errGetAllPeople := r.db.
+		Scopes(utils.NewPagination(nil, &page, &limit, nil).PaginationQuery).
 		Find(&people).Error; errGetAllPeople != nil {
 		r.log.Errorf("Error on Repo: %v", errGetAllPeople)
 		return nil, 0, errors.New("technical issue happen, please try again after a while")
 	}
+
+	id = utils.GetTotalData("peoples", r.db, nil)
 
 	return people, int(id), nil
 }

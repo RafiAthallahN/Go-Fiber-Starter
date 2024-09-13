@@ -4,6 +4,7 @@ import (
 	"go-fiber/starter/backend/entities"
 	"go-fiber/starter/backend/services"
 	"go-fiber/starter/backend/utils"
+	"math"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -33,7 +34,7 @@ func (h *PeopleHandler) GetPeople(c *fiber.Ctx) error {
 		})
 	}
 
-	totalPage := peopleCount / limit
+	totalPage := int(math.Ceil(float64(peopleCount) / float64(limit)))
 
 	return c.Status(fiber.StatusOK).JSON(utils.Response{
 		StatusCode: fiber.StatusOK,
@@ -78,17 +79,12 @@ func (h *PeopleHandler) GetPerson(c *fiber.Ctx) error {
 
 func (h *PeopleHandler) InsertPeople(c *fiber.Ctx) error {
 
-	var request []entities.People
-
-	if errParseAndValidate := utils.ParseAndValidate(c, request); errParseAndValidate != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(utils.Response{
-			StatusCode: fiber.StatusBadRequest,
-			Message:    "Failed to Insert People",
-			Error:      errParseAndValidate,
-		})
+	data, errParseAndValidate := utils.ParseAndValidate[[]entities.People](c, c.Request().Body())
+	if errParseAndValidate != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errParseAndValidate)
 	}
 
-	response, errInsertPeople := h.service.InsertPeople(request)
+	response, errInsertPeople := h.service.InsertPeople(data)
 	if errInsertPeople != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(utils.Response{
 			StatusCode: fiber.StatusBadRequest,
@@ -106,17 +102,12 @@ func (h *PeopleHandler) InsertPeople(c *fiber.Ctx) error {
 
 func (h *PeopleHandler) InsertPerson(c *fiber.Ctx) error {
 
-	var request entities.People
-
-	if errParseAndValidate := utils.ParseAndValidate(c, request); errParseAndValidate != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(utils.Response{
-			StatusCode: fiber.StatusBadRequest,
-			Message:    "Failed to insert person",
-			Error:      errParseAndValidate,
-		})
+	data, errParseAndValidate := utils.ParseAndValidate[entities.People](c, c.Request().Body())
+	if errParseAndValidate != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errParseAndValidate)
 	}
 
-	response, errInsertPerson := h.service.InsertPerson(request)
+	response, errInsertPerson := h.service.InsertPerson(data)
 	if errInsertPerson != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.Response{
 			StatusCode: fiber.StatusInternalServerError,
@@ -134,16 +125,12 @@ func (h *PeopleHandler) InsertPerson(c *fiber.Ctx) error {
 
 func (h *PeopleHandler) UpdatePerson(c *fiber.Ctx) error {
 
-	var request entities.People
-	if errParseAndValidate := utils.ParseAndValidate(c, request); errParseAndValidate != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(utils.Response{
-			StatusCode: fiber.StatusBadRequest,
-			Message:    "Failed to update person",
-			Error:      errParseAndValidate,
-		})
+	data, errParseAndValidate := utils.ParseAndValidate[entities.People](c, c.Request().Body())
+	if errParseAndValidate != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errParseAndValidate)
 	}
 
-	response, errUpdatePerson := h.service.UpdatePerson(request)
+	response, errUpdatePerson := h.service.UpdatePerson(data)
 	if errUpdatePerson != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(utils.Response{
 			StatusCode: fiber.StatusInternalServerError,

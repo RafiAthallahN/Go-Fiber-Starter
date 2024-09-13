@@ -27,7 +27,8 @@ func NewPagination(Total, Page, Limit, TotalPage *int) *Pagination {
 }
 
 func (p *Pagination) PaginationQuery(db *gorm.DB) *gorm.DB {
-	return db.Offset(*p.Page - 1**p.Limit).Limit(*p.Limit)
+	offset := (*p.Page - 1) * *p.Limit
+	return db.Offset(offset).Limit(*p.Limit)
 }
 
 func GetTotalData(tableName string, db *gorm.DB, filter *func(*gorm.DB) *gorm.DB) int64 {
